@@ -7,3 +7,7 @@ framework:
     - hypercorn
     - daphne
     - granian
+    - weft-tokio
+    - weft-compio
+    - weft-tokio-ft
+    - weft-compio-ft

@@ -6,3 +6,7 @@ framework:
     - uvicorn
     - hypercorn
     - daphne
+    - weft-tokio
+    - weft-compio
+    - weft-tokio-ft
+    - weft-compio-ft

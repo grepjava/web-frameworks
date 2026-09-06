@@ -93,6 +93,97 @@ language:
           --port 3000 \
           --workers $(nproc) \
           ${PYTHON_APP}
+    # weft (https://github.com/grepjava/weft) is a fork of granian that adds a
+    # selectable native runtime backend (Tokio or Compio) and a selectable
+    # Python worker model (processes or free-threaded threads). It is not yet
+    # published to PyPI, so it is installed from source (a Rust toolchain is
+    # required to build its native extension; pinned to a specific commit for
+    # reproducibility).
+    weft-tokio:
+      build_deps:
+        - build-essential
+        - pkg-config
+      bootstrap:
+        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && . "$HOME/.cargo/env" && pip install "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
+      environment:
+        INTERFACE: asgi
+        RUNTIME: tokio
+        PYTHON_APP: server:app
+      command: >
+        weft \
+          --log-level critical \
+          --interface ${INTERFACE} \
+          --runtime ${RUNTIME} \
+          --host 0.0.0.0 \
+          --port 3000 \
+          --workers $(nproc) \
+          ${PYTHON_APP}
+    weft-compio:
+      build_deps:
+        - build-essential
+        - pkg-config
+      bootstrap:
+        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && . "$HOME/.cargo/env" && pip install "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
+      environment:
+        INTERFACE: asgi
+        RUNTIME: compio
+        PYTHON_APP: server:app
+      command: >
+        weft \
+          --log-level critical \
+          --interface ${INTERFACE} \
+          --runtime ${RUNTIME} \
+          --host 0.0.0.0 \
+          --port 3000 \
+          --workers $(nproc) \
+          ${PYTHON_APP}
+    # Free-threaded variants: one process, N worker *threads* on a
+    # free-threaded (--disable-gil) CPython 3.14 interpreter, installed via uv
+    # into its own virtualenv (the base image's system Python is a standard
+    # GIL build). Experimental in weft itself; included here as a distinct
+    # comparison point, not a replacement for the process-based engines above.
+    weft-tokio-ft:
+      build_deps:
+        - build-essential
+        - pkg-config
+      bootstrap:
+        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH" && uv python install 3.14t && uv venv --python 3.14t /opt/venv-ft && uv pip install --python /opt/venv-ft/bin/python "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
+      environment:
+        INTERFACE: asgi
+        RUNTIME: tokio
+        WORKER_MODE: threads
+        PYTHON_APP: server:app
+      command: >
+        /opt/venv-ft/bin/weft \
+          --log-level critical \
+          --interface ${INTERFACE} \
+          --runtime ${RUNTIME} \
+          --python-worker-mode ${WORKER_MODE} \
+          --host 0.0.0.0 \
+          --port 3000 \
+          --workers $(nproc) \
+          ${PYTHON_APP}
+    weft-compio-ft:
+      build_deps:
+        - build-essential
+        - pkg-config
+      bootstrap:
+        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH" && uv python install 3.14t && uv venv --python 3.14t /opt/venv-ft && uv pip install --python /opt/venv-ft/bin/python "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
+      environment:
+        INTERFACE: asgi
+        RUNTIME: compio
+        WORKER_MODE: threads
+        PYTHON_APP: server:app
+      command: >
+        /opt/venv-ft/bin/weft \
+          --log-level critical \
+          --interface ${INTERFACE} \
+          --runtime ${RUNTIME} \
+          --python-worker-mode ${WORKER_MODE} \
+          --host 0.0.0.0 \
+          --port 3000 \
+          --workers $(nproc) \
+          ${PYTHON_APP}
 
 framework:
   engines:
