@@ -150,7 +150,7 @@ language:
         - pkg-config
         - git
       bootstrap:
-        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH" && uv python install 3.14t && uv venv --python 3.14t /opt/venv-ft && uv pip install --python /opt/venv-ft/bin/python "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
+        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH" && uv python install 3.14t && uv venv --python 3.14t /opt/venv-ft && uv pip install --python /opt/venv-ft/bin/python . "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
       environment:
         INTERFACE: asgi
         RUNTIME: tokio
@@ -172,7 +172,7 @@ language:
         - pkg-config
         - git
       bootstrap:
-        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH" && uv python install 3.14t && uv venv --python 3.14t /opt/venv-ft && uv pip install --python /opt/venv-ft/bin/python "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
+        - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH" && uv python install 3.14t && uv venv --python 3.14t /opt/venv-ft && uv pip install --python /opt/venv-ft/bin/python . "weft-server @ git+https://github.com/grepjava/weft.git@07589dcdd703ab16365e69ad59ba6c8e23cd3f39"
       environment:
         INTERFACE: asgi
         RUNTIME: compio
